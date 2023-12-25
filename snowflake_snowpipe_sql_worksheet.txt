@@ -1,0 +1,72 @@
+CREATE OR REPLACE TABLE album(
+  album_id STRING,
+  name STRING,
+  relase_date STRING,
+  total_tracks INT,
+  url String
+);
+
+CREATE OR REPLACE file format csv_file_format
+  type = csv
+  field_delimiter = ','
+  skip_header = 1
+  null_if = ('NULL','null')
+  empty_field_as_null = TRUE;
+
+CREATE OR REPLACE TABLE artist(
+  artist_id STRING,
+  artist_name STRING,
+  external_url STRING
+);
+
+CREATE OR REPLACE TABLE song(
+    song_id VARCHAR( 100 ),
+    song_name VARCHAR( 100 ),
+    duration_ms INT,
+    url VARCHAR( 100 ),
+    popularity INT,
+    song_added VARCHAR( 100 ),
+    album_id VARCHAR( 100 ),
+    artist_id VARCHAR( 100 )
+);
+
+CREATE OR REPLACE stage csv_folderab
+    URL='s3://your_bucket_name/transformed_data/album_data/'
+    STORAGE_INTEGRATION = s3_conn
+#here external stoeage integration is used
+    FILE_FORMAT = csv_file_format;
+
+CREATE OR REPLACE pipe spotify_etl_project.pipe.album_pipe
+auto_ingest = TRUE
+AS
+COPY INTO album
+FROM @csv_folderab;
+
+
+//artist
+CREATE OR REPLACE stage csv_folderar
+    URL='s3://your_bucket_name/transformed_data/aritist_data/'
+    STORAGE_INTEGRATION = s3_conn
+    FILE_FORMAT = csv_file_format;
+
+CREATE OR REPLACE pipe spotify_etl_project.pipe.artist_pipe
+auto_ingest = TRUE
+AS
+COPY INTO artist
+FROM @csv_folderar;
+
+//song
+
+CREATE OR REPLACE stage csv_folderso
+    URL='s3://your_bucket_name/transformed_data/songs_data/'
+    STORAGE_INTEGRATION = s3_conn
+    FILE_FORMAT = csv_file_format;
+
+
+CREATE OR REPLACE pipe spotify_etl_project.pipe.song_pipe
+auto_ingest = TRUE
+AS
+COPY INTO song
+FROM @csv_folderso
+FILE_FORMAT = (TYPE = 'CSV')
+ON_ERROR = 'CONTINUE';
