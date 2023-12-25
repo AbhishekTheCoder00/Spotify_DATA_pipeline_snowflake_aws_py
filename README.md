@@ -1,4 +1,5 @@
 # Spotify_DATA_pipeline_snowflake_aws_py
+- Set up a seamless Spotify data pipeline to Snowflake on AWS with a streamlined process, from Spotify API integration to Snowflake database storage. Leverage Jupyter Notebooks, AWS S3, Lambda functions, and Snowflake for efficient data extraction, transformation, and analysis.
 
 ## Project Architecture 
 ![Alt text](https://github.com/AbhishekTheCoder00/Spotify_DATA_pipeline_snowflake_aws_py/blob/main/Project%20Architecture.png)
